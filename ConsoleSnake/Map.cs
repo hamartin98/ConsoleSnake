@@ -9,6 +9,9 @@ namespace ConsoleSnake
         private string mapData;
         private int width;
         private int height;
+
+        public int Width { get => width; }
+        public int Height { get => height; }
         
         public Map()
         {
@@ -19,10 +22,23 @@ namespace ConsoleSnake
         public void ReadFromFile(string fileName)
         {
             string path = @"Maps/" + fileName + ".txt";
-            
+            int lines = 0;
+
             using(StreamReader streamReader = new StreamReader(path))
             {
-                mapData = streamReader.ReadToEnd();
+                //mapData = streamReader.ReadToEnd();
+
+                string line = streamReader.ReadLine() + "\n";
+                width = line.Length;
+                mapData += line;
+
+                while(!streamReader.EndOfStream)
+                {
+                    mapData += streamReader.ReadLine() + "\n";
+                    lines++;
+                }
+
+                height = lines;
             }
         }
 
