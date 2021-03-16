@@ -35,5 +35,12 @@ namespace ConsoleSnake
             this.X = point.X;
             this.Y = point.Y;
         }
+
+        // Modifes the position based on the given direction
+        public void ModByDirection(Direction direction)
+        {
+            this.X += direction.Xmod;
+            this.Y += direction.Ymod;
+        }
     }
 }
