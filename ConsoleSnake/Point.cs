@@ -42,5 +42,34 @@ namespace ConsoleSnake
             this.X += direction.Xmod;
             this.Y += direction.Ymod;
         }
+
+        // Returns a new Point object with random x and y coordinates between 1 and the given maximum values
+        public static Point GetRandom(int xMax, int yMax)
+        {
+            Random rand = new Random();
+            int x = rand.Next(1, xMax);
+            int y = rand.Next(1, yMax);
+            return new Point(x, y);
+        }
+
+        // Check equality between two point object
+        // Return true if they are equal
+        public static bool operator ==(Point p1, Point p2)
+        {
+            return (p1.X == p2.X && p1.Y == p2.Y);
+        }
+
+        // Check equality between two point object
+        // Return true if they are not equal
+        public static bool operator !=(Point p1, Point p2)
+        {
+            return !(p1.X == p2.X && p1.Y == p2.Y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            Point pos = obj as Point;
+            return X == pos.X && Y == pos.Y;
+        }
     }
 }

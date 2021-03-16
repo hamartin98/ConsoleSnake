@@ -10,21 +10,33 @@ namespace ConsoleSnake
     {
         private bool inGame; // Stores the current state of the game, true if the game is on
         private Snake snake; // Represents the snake that can be contrelled by the player
-        List<Obstacle> obstalces; // Stores all of the obstacles on the map
+        List<Obstacle> obstacles; // Stores all of the obstacles on the map
         private int speed; // stores the speed of the game in milliseconds, the time interval to refresh the screen
         private int mapWidth;
         private int mapHeight;
+        StringBuilder line;
+        private int score;
 
         public Game()
         {
             inGame = false;
             snake = new Snake();
-            obstalces = new List<Obstacle>();
+            obstacles = new List<Obstacle>();
             mapWidth = 120;
             mapHeight = 40;
             speed = 500;
+            score = 0;
 
             InitConsole();
+
+            line = new StringBuilder();
+            for (int i = 0; i < mapWidth; i++)
+            {
+                line.Append('-');
+            }
+
+            Food apple = new Food(Point.GetRandom(mapWidth, mapHeight));
+            obstacles.Add(apple);
         }
 
         // Can be called from outside of the class to start the game
@@ -57,13 +69,15 @@ namespace ConsoleSnake
 
             }
             while (inGame);
+
+            ShowEndScreen();
         }
 
         // Checks snake collision with the edge of the map, obstacles and istself
         // return true if a hit occurs
         private bool CheckHit()
         {
-            return CheckEdgeHit();
+            return CheckEdgeHit() || CheckObstacleHit();
         }
 
         // Returns true if the snake hits the edge of the map
@@ -76,6 +90,31 @@ namespace ConsoleSnake
             if (posX <= 0 || posX == mapWidth || posY <= 0 || posY == mapHeight)
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        // Check hit with every obstacle on the map
+        // If the snake hit something that cannot be eaten returns true
+        private bool CheckObstacleHit()
+        {
+            Point headPos = snake.HeadPos;
+            foreach(var obstacle in obstacles)
+            {
+                if(obstacle.Position.Equals(headPos))
+                {
+                    if(obstacle.IsDestroyable) // the snake ate something, it grows and gets score
+                    {
+                        snake.Grow();
+                        score += obstacle.Score;
+                        obstacles.Remove(obstacle);
+                        obstacles.Add(new Food(new Point(Point.GetRandom(mapWidth, mapHeight))));
+                        break;
+                    }
+
+                    return true;
+                }
             }
 
             return false;
@@ -96,6 +135,10 @@ namespace ConsoleSnake
         {
             Console.Clear();
             PrintSnake();
+            PrintObstacles();
+
+            Console.SetCursorPosition(0, mapHeight);
+            Console.Write(line.ToString());
         }
 
         // Prints the body parts of the snake to the console
@@ -105,6 +148,20 @@ namespace ConsoleSnake
             {
                 snake.BodyPart.PrintToScreen(pos);
             }
+        }
+
+        private void PrintObstacles()
+        {
+            foreach(var obstacle in obstacles)
+            {
+                obstacle.Img.PrintToScreen(obstacle.Position);
+            }
+        }
+
+        private void ShowEndScreen()
+        {
+            Console.Clear();
+            Console.WriteLine($"Score: {score}");
         }
     }
 }

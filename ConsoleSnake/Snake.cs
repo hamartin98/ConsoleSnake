@@ -36,9 +36,9 @@ namespace ConsoleSnake
         // If the given direction is null, the direction remains the previous
         public void SetDirection(Direction dir)
         {
-            if(dir != null)
+            if(dir != null && dir != direction)
             {
-                this.direction = dir;
+                direction = dir;
             }
         }
 
@@ -65,6 +65,16 @@ namespace ConsoleSnake
         {
             body.AddFirst(new Point(HeadPos));
             body.RemoveLast();
+        }
+
+        // Add a new element to the end of the body
+        // Set its position based on the direction and last body part
+        public void Grow()
+        {
+            Point tail = body.Last.Value;
+            Point newTail = new Point(tail);
+            newTail.ModByDirection(direction);
+            body.AddLast(newTail);
         }
     }
 }
