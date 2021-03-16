@@ -12,12 +12,18 @@ namespace ConsoleSnake
         private Snake snake; // Represents the snake that can be contrelled by the player
         List<Obstacle> obstalces; // Stores all of the obstacles on the map
         private int speed; // stores the speed of the game in milliseconds, the time interval to refresh the screen
+        private int mapWidth;
+        private int mapHeight;
 
         public Game()
         {
             inGame = false;
             snake = new Snake();
             obstalces = new List<Obstacle>();
+            mapWidth = 120;
+            mapHeight = 40;
+
+            InitConsole();
         }
 
         // Can be called from outside of the class to start the game
@@ -38,6 +44,16 @@ namespace ConsoleSnake
         private bool CheckImpact()
         {
             return false;
+        }
+
+        // Initialize the console window
+        // Sets the output encoding, the cursor visibility, the height and width of the window
+        private void InitConsole()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.CursorVisible = false;
+            Console.WindowHeight = mapHeight;
+            Console.WindowWidth = mapWidth;
         }
     }
 }
