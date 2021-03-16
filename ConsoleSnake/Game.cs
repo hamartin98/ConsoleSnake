@@ -16,6 +16,7 @@ namespace ConsoleSnake
         private int mapHeight;
         StringBuilder line;
         private int score;
+        private Map map;
 
         public Game()
         {
@@ -26,6 +27,7 @@ namespace ConsoleSnake
             mapHeight = 40;
             speed = 500;
             score = 0;
+            map = new Map();
 
             InitConsole();
 
@@ -35,8 +37,11 @@ namespace ConsoleSnake
                 line.Append('-');
             }
 
+            AddRandomObstacles(10);
+
             Food apple = new Food(Point.GetRandom(mapWidth, mapHeight));
             obstacles.Add(apple);
+
         }
 
         // Can be called from outside of the class to start the game
@@ -100,11 +105,11 @@ namespace ConsoleSnake
         private bool CheckObstacleHit()
         {
             Point headPos = snake.HeadPos;
-            foreach(var obstacle in obstacles)
+            foreach (var obstacle in obstacles)
             {
-                if(obstacle.Position.Equals(headPos))
+                if (obstacle.Position.Equals(headPos))
                 {
-                    if(obstacle.IsDestroyable) // the snake ate something, it grows and gets score
+                    if (obstacle.IsDestroyable) // the snake ate something, it grows and gets score
                     {
                         snake.Grow();
                         score += obstacle.Score;
@@ -133,12 +138,10 @@ namespace ConsoleSnake
         // Displays everything on the console
         private void PrintMap()
         {
-            Console.Clear();
+            //Console.Clear();
+            map.Print();
             PrintSnake();
             PrintObstacles();
-
-            Console.SetCursorPosition(0, mapHeight);
-            Console.Write(line.ToString());
         }
 
         // Prints the body parts of the snake to the console
@@ -150,18 +153,51 @@ namespace ConsoleSnake
             }
         }
 
+        // Prints every obstacle to the console
         private void PrintObstacles()
         {
-            foreach(var obstacle in obstacles)
+            foreach (var obstacle in obstacles)
             {
                 obstacle.Img.PrintToScreen(obstacle.Position);
             }
         }
 
+        // Show the end screen after the game is finished
         private void ShowEndScreen()
         {
+            string endScreen = FileIO.readToString("Screens/endScreen.txt");
+            Console.ForegroundColor = ConsoleColor.Green;
+            endScreen = endScreen.Replace("ABCD", ScoreToString());
             Console.Clear();
-            Console.WriteLine($"Score: {score}");
+            Console.WriteLine(endScreen);
+        }
+
+        // Add undestroyable obstacles to the map
+        private void AddRandomObstacles(int count)
+        {
+            WallObstacle wallObst;
+
+            for(int idx = 0; idx < count; idx++)
+            {
+                wallObst = new WallObstacle(new Point(Point.GetRandom(mapWidth, mapHeight)));
+                obstacles.Add(wallObst);
+            }
+        }
+
+        // Create a string from the score filled with spaces on empty places
+        private string ScoreToString()
+        {
+            string result = "";
+            string s = score.ToString();
+            int size = 4 - s.Length;
+            for (int i = 0; i < size; i++)
+            {
+                result += " ";
+            }
+            result += s;
+
+            return result;
+
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleSnake
+﻿namespace ConsoleSnake
 {
     // Stores x and y direction modifiers, which can be used to calculate new position based on the direction
     class Direction

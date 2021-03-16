@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
-
-namespace ConsoleSnake
+﻿namespace ConsoleSnake
 {
     // Represent an obstacle on the map
     abstract class Obstacle
