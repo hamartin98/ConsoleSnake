@@ -10,38 +10,46 @@ namespace ConsoleSnake
     {
         private bool inGame; // Stores the current state of the game, true if the game is on
         private Snake snake; // Represents the snake that can be contrelled by the player
-        List<Obstacle> obstacles; // Stores all of the obstacles on the map
-        private int speed; // stores the speed of the game in milliseconds, the time interval to refresh the screen
+        List<Obstacle> obstacles; // List of all obstacles on the map
+        private int speed; // Speed of the game in milliseconds, smaller value means faster game speed
         private int mapWidth;
         private int mapHeight;
-        StringBuilder line;
         private int score;
         private Map map;
 
         public Game()
         {
+            Init();
+            AddObstacles();
+
+        }
+
+        private void Init()
+        {
             inGame = false;
             snake = new Snake();
             obstacles = new List<Obstacle>();
-            mapWidth = 120;
-            mapHeight = 40;
+            map = new Map();
+            mapWidth = map.Width;
+            mapHeight = map.Height;
             speed = 500;
             score = 0;
-            map = new Map();
 
             InitConsole();
 
-            line = new StringBuilder();
-            for (int i = 0; i < mapWidth; i++)
-            {
-                line.Append('-');
-            }
+        }
 
+        // Add obstacles to the map
+        private void AddObstacles()
+        {
             AddRandomObstacles(10);
 
-            Food apple = new Food(Point.GetRandom(mapWidth, mapHeight));
-            obstacles.Add(apple);
-
+            Food apple;
+            for(int i = 0; i < 3; i++)
+            {
+                apple = new Food(Point.GetRandom(mapWidth, mapHeight));
+                obstacles.Add(apple);
+            }
         }
 
         // Can be called from outside of the class to start the game
@@ -112,6 +120,7 @@ namespace ConsoleSnake
                     if (obstacle.IsDestroyable) // the snake ate something, it grows and gets score
                     {
                         snake.Grow();
+                        IncreaseSpeed();
                         score += obstacle.Score;
                         obstacles.Remove(obstacle);
                         obstacles.Add(new Food(new Point(Point.GetRandom(mapWidth, mapHeight))));
@@ -131,8 +140,8 @@ namespace ConsoleSnake
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
-            Console.WindowHeight = mapHeight;
-            Console.WindowWidth = mapWidth;
+            Console.WindowHeight = mapHeight + 10;
+            Console.WindowWidth = mapWidth + 10;
         }
 
         // Displays everything on the console
@@ -198,6 +207,13 @@ namespace ConsoleSnake
 
             return result;
 
+        }
+
+        // Modifiy the speed, the minimum value is 200
+        private void IncreaseSpeed()
+        {
+            int speedMod = - 20;
+            speed = Math.Max(200, speed - speedMod);
         }
     }
 }
